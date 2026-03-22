@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M-Academy | Broadcast Emails</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/admin.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📧</text></svg>">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">M-Academy</div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="sidebar-link">
+                    <span>Overview</span>
+                </a>
+                <a href="sync.html" class="sidebar-link">
+                    <span>Sync Moodle</span>
+                </a>
+                <a href="publish.html" class="sidebar-link">
+                    <span>Publish Results</span>
+                </a>
+                <a href="revoke.html" class="sidebar-link">
+                    <span>Revoke Results</span>
+                </a>
+                <a href="broadcast.html" class="sidebar-link active">
+                    <span>Broadcast Emails</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <a href="index.html" class="btn btn-sm btn-full" id="logout-btn">Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="mb-4">
+                <h1>Broadcast Emails</h1>
+                <p class="text-secondary">Send notification emails to all students enrolled in a specific course.</p>
+            </header>
+
+            <!-- Broadcast Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>Email Broadcasting</h2>
+                    <span class="text-tertiary" style="font-size: 0.875rem;">Bulk email delivery to enrolled students</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="courseCode">Course Code</label>
+                    <input 
+                        type="text" 
+                        id="courseCode" 
+                        name="courseCode" 
+                        placeholder="e.g., GET 201 or ALL"
+                        required
+                    >
+                </div>
+
+                <div class="flex gap-4 mb-3">
+                    <button type="button" class="btn btn-primary" id="broadcast-btn">
+                        Broadcast Emails
+                    </button>
+                    <button type="button" class="btn" id="clear-input">
+                        Clear All
+                    </button>
+                </div>
+
+                <div class="terminal-container">
+                    <div class="terminal-header">
+                        <div class="terminal-title">Broadcast Logs</div>
+                        <div class="terminal-clear" id="clear-logs">Clear Logs</div>
+                    </div>
+                    
+                    <pre class="terminal" id="terminal-log">
+[System] Ready to broadcast emails.
+Enter a course code and click "Broadcast Emails" to send notifications.
+                    </pre>
+                </div>
+            </div>
+
+            <!-- Information -->
+            <div class="card">
+                <h3>Email Broadcasting Details</h3>
+                <ul style="list-style-type: none; padding-left: 0;">
+                    <li style="margin-bottom: 0.75rem; padding-left: 1rem; position: relative;">
+                        <span style="position: absolute; left: 0;">•</span>
+                        Emails are sent asynchronously in the background
+                    </li>
+                    <li style="margin-bottom: 0.75rem; padding-left: 1rem; position: relative;">
+                        <span style="position: absolute; left: 0;">•</span>
+                        Delivery status is tracked and logged for each recipient
+                    </li>
+                    <li style="margin-bottom: 0.75rem; padding-left: 1rem; position: relative;">
+                        <span style="position: absolute; left: 0;">•</span>
+                        Failed deliveries are retried automatically (up to 3 times)
+                    </li>
+                    <li style="margin-bottom: 0.75rem; padding-left: 1rem; position: relative;">
+                        <span style="position: absolute; left: 0;">•</span>
+                        Email templates can be customized in the backend
+                    </li>
+                    <li style="margin-bottom: 0.75rem; padding-left: 1rem; position: relative;">
+                        <span style="position: absolute; left: 0;">•</span>
+                        All broadcasts are logged for compliance and audit purposes
+                    </li>
+                </ul>
+                
+                <div style="background-color: rgba(59, 130, 246, 0.1); border: 1px solid #3b82f6; border-radius: 6px; padding: 1rem; margin-top: 1rem;">
+                    <h4 style="color: #3b82f6; margin-bottom: 0.5rem;">ℹ️ Broadcast Limitations</h4>
+                    <p style="font-size: 0.875rem; color: #a1a1aa; margin: 0;">
+                        Large courses may take several minutes to process. Email delivery 
+                        depends on the configured email provider (SMTP, SendGrid, etc.). 
+                        Check the logs for individual delivery status.
+                    </p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="scripts/auth.js"></script>
+    <script src="scripts/actions.js"></script>
+    <script>
+        // Set active sidebar link
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = window.location.pathname.split('/').pop();
+            const links = document.querySelectorAll('.sidebar-link');
+            
+            links.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href === currentPage) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+            
+            // Logout button
+            document.getElementById('logout-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                localStorage.removeItem('mAcademyJWT');
+                window.location.href = 'index.html';
+            });
+            
+            // Clear input button
+            document.getElementById('clear-input').addEventListener('click', function() {
+                document.getElementById('courseCode').value = '';
+                document.getElementById('courseCode').focus();
+            });
+            
+            // Clear logs button
+            document.getElementById('clear-logs').addEventListener('click', function() {
+                document.getElementById('terminal-log').textContent = '[Cleared] Broadcast logs cleared\n[System] Ready for new broadcast operations.';
+            });
+            
+            // Auto-focus course code input
+            document.getElementById('courseCode').focus();
+        });
+    </script>
+</body>
+</html>

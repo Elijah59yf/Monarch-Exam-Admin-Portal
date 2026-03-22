@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M-Academy | Sign In</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/admin.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔐</text></svg>">
+</head>
+<body>
+    <div class="auth-page">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1 class="auth-title">Sign In</h1>
+                <p class="auth-subtitle">Enter your credentials to access the admin portal</p>
+            </div>
+
+            <div id="auth-error" class="auth-error hidden"></div>
+            <div id="auth-success" class="auth-success hidden"></div>
+
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="admin@macademy.edu" 
+                        required
+                        autocomplete="email"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="••••••••" 
+                        required
+                        autocomplete="current-password"
+                    >
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">
+                    Sign In
+                </button>
+            </form>
+
+            <div class="mt-3 text-center">
+                <p class="text-secondary" style="font-size: 0.75rem;">
+                    This portal is secured with JWT authentication.
+                    All actions are logged and monitored.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts/auth.js"></script>
+    <script>
+        // Handle login form submission
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorEl = document.getElementById('auth-error');
+            const successEl = document.getElementById('auth-success');
+            
+            // Clear previous messages
+            errorEl.classList.add('hidden');
+            successEl.classList.add('hidden');
+            
+            // Simple validation
+            if (!email || !password) {
+                errorEl.textContent = 'Please fill in all fields';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+            
+            try {
+                const response = await fetch('http://localhost:1337/api/auth/local', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        identifier: email,
+                        password: password
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Save JWT to localStorage
+                    localStorage.setItem('mAcademyJWT', data.jwt);
+                    
+                    // Show success message
+                    successEl.textContent = 'Login successful! Redirecting...';
+                    successEl.classList.remove('hidden');
+                    
+                    // Redirect to dashboard after short delay
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1000);
+                } else {
+                    // Show error message
+                    errorEl.textContent = data.error?.message || 'Invalid credentials';
+                    errorEl.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                errorEl.textContent = 'Network error. Please check your connection.';
+                errorEl.classList.remove('hidden');
+            }
+        });
+        
+        // Check if user is already logged in
+        window.addEventListener('load', () => {
+            const jwt = localStorage.getItem('mAcademyJWT');
+            if (jwt) {
+                // Already logged in, redirect to dashboard
+                window.location.href = 'dashboard.html';
+            }
+        });
+    </script>
+</body>
+</html>

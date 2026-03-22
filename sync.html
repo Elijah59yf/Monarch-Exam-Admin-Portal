@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M-Academy | Sync Moodle</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/admin.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔄</text></svg>">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">M-Academy</div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="sidebar-link">
+                    <span>Overview</span>
+                </a>
+                <a href="sync.html" class="sidebar-link active">
+                    <span>Sync Moodle</span>
+                </a>
+                <a href="publish.html" class="sidebar-link">
+                    <span>Publish Results</span>
+                </a>
+                <a href="revoke.html" class="sidebar-link">
+                    <span>Revoke Results</span>
+                </a>
+                <a href="broadcast.html" class="sidebar-link">
+                    <span>Broadcast Emails</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <a href="index.html" class="btn btn-sm btn-full" id="logout-btn">Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="mb-4">
+                <h1>Sync Moodle</h1>
+                <p class="text-secondary">Fetch and sync grade data from Moodle LMS for a specific course.</p>
+            </header>
+
+            <!-- Sync Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>Grade Synchronization</h2>
+                    <span class="text-tertiary" style="font-size: 0.875rem;">Real-time sync with Moodle API</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="cmid">Moodle CMID</label>
+                    <input 
+                        type="number" 
+                        id="cmid" 
+                        name="cmid" 
+                        placeholder="e.g., 12345"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="courseId">Moodle Course ID</label>
+                    <input 
+                        type="number" 
+                        id="courseId" 
+                        name="courseId" 
+                        placeholder="e.g., 67890"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="courseCode">Course Code</label>
+                    <input 
+                        type="text" 
+                        id="courseCode" 
+                        name="courseCode" 
+                        placeholder="e.g., GET 201 or ALL"
+                        required
+                    >
+                </div>
+
+                <div class="flex gap-4 mb-3">
+                    <button type="button" class="btn btn-primary" id="sync-btn">
+                        Sync Grades
+                    </button>
+                    <button type="button" class="btn" id="clear-input">
+                        Clear Input
+                    </button>
+                </div>
+
+                <div class="terminal-container">
+                    <div class="terminal-header">
+                        <div class="terminal-title">Sync Logs</div>
+                        <div class="terminal-clear" id="clear-logs">Clear Logs</div>
+                    </div>
+                    
+                    <pre class="terminal" id="terminal-log">
+[System] Ready to sync Moodle grades.
+Enter the required fields and click "Sync Grades" to begin.
+                    </pre>
+                </div>
+            </div>
+
+            <!-- Information -->
+            <div class="card">
+                <h3>How This Works</h3>
+                <ul style="list-style-type: none; padding-left: 0;">
+                    <li style="margin-bottom: 0.75rem; padding-left: 1rem; position: relative;">
+                        <span style="position: absolute; left: 0;">•</span>
+                        Connects to Moodle REST API using configured credentials
+                    </li>
+                    <li style="margin-bottom: 0.75rem; padding-left: 1rem; position: relative;">
+                        <span style="position: absolute; left: 0;">•</span>
+                        Fetches gradebook data for the specified course
+                    </li>
+                    <li style="margin-bottom: 0.75rem; padding-left: 1rem; position: relative;">
+                        <span style="position: absolute; left: 0;">•</span>
+                        Maps Moodle grades to M-Academy student records
+                    </li>
+                    <li style="margin-bottom: 0.75rem; padding-left: 1rem; position: relative;">
+                        <span style="position: absolute; left: 0;">•</span>
+                        Updates the database with synchronized grades
+                    </li>
+                    <li style="margin-bottom: 0.75rem; padding-left: 1rem; position: relative;">
+                        <span style="position: absolute; left: 0;">•</span>
+                        Generates a detailed report of changes made
+                    </li>
+                </ul>
+            </div>
+        </main>
+    </div>
+
+    <script src="scripts/auth.js"></script>
+    <script src="scripts/actions.js"></script>
+    <script>
+        // Set active sidebar link
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = window.location.pathname.split('/').pop();
+            const links = document.querySelectorAll('.sidebar-link');
+            
+            links.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href === currentPage) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+            
+            // Logout button
+            document.getElementById('logout-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                localStorage.removeItem('mAcademyJWT');
+                window.location.href = 'index.html';
+            });
+            
+            // Clear input button
+            document.getElementById('clear-input').addEventListener('click', function() {
+                document.getElementById('cmid').value = '';
+                document.getElementById('courseId').value = '';
+                document.getElementById('courseCode').value = '';
+                document.getElementById('courseCode').focus();
+            });
+            
+            // Clear logs button
+            document.getElementById('clear-logs').addEventListener('click', function() {
+                document.getElementById('terminal-log').textContent = '[Cleared] Sync logs cleared\n[System] Ready for new sync operations.';
+            });
+            
+            // Auto-focus course code input
+            document.getElementById('courseCode').focus();
+        });
+    </script>
+</body>
+</html>
