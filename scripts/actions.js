@@ -3,7 +3,7 @@
  * Clean fetch wrapper matching backend API requirements
  */
 
-const API_BASE_URL = 'http://localhost:1337/api';
+const API_BASE_URL = 'https://api.monarchdem.me/api';
 
 /**
  * Get JWT token from localStorage
