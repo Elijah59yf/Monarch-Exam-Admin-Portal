@@ -3,7 +3,7 @@
  * Handles JWT authentication and route protection
  */
 
-const AUTH_API_URL = 'http://localhost:1337/api/auth/local';
+const AUTH_API_URL = 'https://api.monarchdem.me/api/auth/local';
 const JWT_STORAGE_KEY = 'mAcademyJWT';
 
 /**
