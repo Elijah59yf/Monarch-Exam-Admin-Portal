@@ -394,6 +394,32 @@ document.addEventListener('DOMContentLoaded', () => {
             await handleBroadcast();
         });
     }
+
+    // 5. HAMBURGER MENU TOGGLE FOR MOBILE
+    const hamburgerToggle = document.getElementById('sidebar-toggle');
+    if (hamburgerToggle) {
+        hamburgerToggle.addEventListener('click', () => {
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar) {
+                sidebar.classList.toggle('active');
+                console.log('Sidebar toggled:', sidebar.classList.contains('active') ? 'visible' : 'hidden');
+            }
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (event) => {
+            const sidebar = document.querySelector('.sidebar');
+            const hamburgerToggle = document.getElementById('sidebar-toggle');
+            
+            if (sidebar && sidebar.classList.contains('active') && 
+                !sidebar.contains(event.target) && 
+                event.target !== hamburgerToggle && 
+                !hamburgerToggle.contains(event.target)) {
+                sidebar.classList.remove('active');
+                console.log('Sidebar closed (clicked outside)');
+            }
+        });
+    }
 });
 
 /**

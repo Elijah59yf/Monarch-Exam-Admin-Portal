@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📧</text></svg>">
 </head>
 <body>
@@ -44,16 +45,16 @@
         <!-- Main Content -->
         <main class="main-content">
             <header class="mb-4">
-                <h1>Broadcast Emails</h1>
-                <p class="text-secondary">Send notification emails to all students enrolled in a specific course.</p>
-            </header>
-
-            <!-- Broadcast Card -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Email Broadcasting</h2>
-                    <span class="text-tertiary" style="font-size: 0.875rem;">Bulk email delivery to enrolled students</span>
+                <div class="header-row">
+                    <div>
+                        <h1>Broadcast Emails</h1>
+                        <p class="text-secondary">Send notification emails to all students enrolled in a specific course.</p>
+                    </div>
+                    <button class="hamburger-menu" id="sidebar-toggle">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
                 </div>
+            </header>
 
                 <div class="form-group">
                     <label for="courseCode">Course Code</label>
